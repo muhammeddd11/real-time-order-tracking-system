@@ -1,0 +1,25 @@
+{
+  "name": "real-time-order-tracking",
+  "version": "1.0.0",
+  "description": "order tracking",
+  "main": "",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "Muhammed abdelsamea",
+  "license": "ISC",
+  "dependencies": {
+    "argon2": "^0.41.1",
+    "connect-flash": "^0.1.1",
+    "connect-mongo": "^5.1.0",
+    "cookie-parser": "^1.4.7",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "events": "^3.3.0",
+    "express": "^4.21.1",
+    "express-session": "^1.18.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.7.2",
+    "nodemon": "^3.1.7"
+  }
+}
