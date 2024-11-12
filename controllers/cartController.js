@@ -1,4 +1,6 @@
-exports.updateCart = (req, res) => {
+const AppError = require("../utls/AppError");
+const catchAsync = require("../utls/catchAsync");
+exports.updateCart = catchAsync((req, res, next) => {
   if (!req.session.cart) {
     req.session.cart = {
       items: {},
@@ -25,4 +27,4 @@ exports.updateCart = (req, res) => {
     message: "The cart has been updated ",
     totalQty: req.session.cart.totalQty,
   });
-};
+});

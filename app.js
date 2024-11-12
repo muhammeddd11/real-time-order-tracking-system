@@ -3,6 +3,7 @@ const app = express();
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
 const menuRouter = require("./routes/menuRouter");
+const AppError = require("./utls/AppError");
 const session = require("express-session");
 
 const indexRouter = require("./routes/indexRouter");
@@ -38,7 +39,7 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/menu", menuRouter);
 app.use("/api/v1/admin", adminRouter);
-app.use("*", function (req, res) {
-  res.send(`We can not find this path ${req.originalUrl}`);
+app.use("*", function (req, res, next) {
+  next(new AppError(`We can not find your path on the server`, 404));
 });
 module.exports = app;

@@ -1,8 +1,10 @@
 const Order = require("../models/orderModel");
 const Menu = require("../models/menuModel");
+const AppError = require("../utls/AppError");
+const catchAsync = require("../utls/catchAsync");
 const { all } = require("../routes/userRouter");
 
-exports.getAllOrder = async (req, res) => {
+exports.getAllOrder = catchAsync(async (req, res, next) => {
   const allOrder = await Order.find({ status: { $ne: "completed" } }, null, {
     sort: { createdAt: -1 },
   }).populate("userId", "-password");
@@ -11,15 +13,19 @@ exports.getAllOrder = async (req, res) => {
     message: `you have ${allOrder.length} uncompleted`,
     allOrder,
   });
-};
-exports.addNewProduct = async (req, res) => {
+});
+exports.addNewProduct = catchAsync(async (req, res, next) => {
   const { name, price, image, size } = req.body;
   if (!name || !price || !image || !size) {
-    req.flash("please provide a suitable data");
-    return res.redirect("/admin/createProduct");
+    return next(
+      new AppError("Please provide suitable product information", 400)
+    );
   }
   const isExist = await Menu.exists({ name });
-  if (isExist) return res.send("The product is already here");
+  if (isExist)
+    return next(
+      new AppError("The product you're trying to add is already here", 400)
+    );
   const newProduct = await Menu.create({
     name,
     price,
@@ -31,5 +37,5 @@ exports.addNewProduct = async (req, res) => {
     message: "A new product has been created",
     newProduct,
   });
-};
+});
 exports.orderStatus = (req, res) => {};

@@ -1,9 +1,10 @@
 const Order = require("../models/orderModel");
-exports.createOrder = (req, res) => {
+const AppError = require("../utls/AppError");
+const catchAsync = require("../utls/catchAsync");
+exports.createOrder = catchAsync((req, res, next) => {
   const { phone, address } = req.body;
   if (!phone || !address) {
-    res.flash("All fields are required");
-    return res.redirect("/cart");
+    return next(new AppError("Please provide all related information", 400));
   }
   const order = Order.create({
     userId: req.session.user._id,
@@ -23,23 +24,23 @@ exports.createOrder = (req, res) => {
       });
     });
   } else {
-    req.flash("Something went wrong please try again");
-    return res.redirect("/cart");
+    return next(
+      new AppError("Something went wrong please try again later", 501)
+    );
   }
-};
-exports.getUserOrder = async (req, res) => {
+});
+exports.getUserOrder = catchAsync(async (req, res, next) => {
   const orders = await Order.find({ userId: req.user._id }, null, {
     sort: { createdAt: -1 },
   });
   res.header("Cache-Control", "no-cahce");
   res.send(orders);
-};
-exports.getSingleOrder = async (req, res) => {
+});
+exports.getSingleOrder = catchAsync(async (req, res) => {
   const order = await Order.findById(req.params.id);
   if (req.user._id === order.userId) {
     return res.send(order);
   } else {
-    res.send("You are not authorized to see this order");
-    return res.redirect("/");
+    return next(new AppError("You are not authorized to see this order", 401));
   }
-};
+});
